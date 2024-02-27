@@ -53,4 +53,11 @@ public class AuthorsController : ControllerBase
 
         return CreatedAtRoute("GetAuthor", new { authorId = authorToReturn.Id }, authorToReturn);
     }
+
+    [HttpOptions]
+    public IActionResult GetOptions()
+    {
+        HttpContext.Response.Headers.Append("Allow", "GET, POST, PUT");
+        return Ok();
+    }
 }
