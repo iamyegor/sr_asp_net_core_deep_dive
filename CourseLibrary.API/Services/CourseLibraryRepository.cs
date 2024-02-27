@@ -140,4 +140,9 @@ public class CourseLibraryRepository : ICourseLibraryRepository
     {
         return (await _context.SaveChangesAsync() >= 0);
     }
+
+    public async Task<bool> DoesCourseExistAsync(Guid authorId, Guid courseId)
+    {
+        return await _context.Courses.AnyAsync(c => c.AuthorId == authorId && c.Id == courseId);
+    }
 }

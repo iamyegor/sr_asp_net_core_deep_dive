@@ -6,6 +6,7 @@ public interface ICourseLibraryRepository
 {
     Task<IEnumerable<Course>> GetCoursesAsync(Guid authorId);
     Task<Course?> GetCourseAsync(Guid authorId, Guid courseId);
+    Task<bool> DoesCourseExistAsync(Guid authorId, Guid courseId);
     void AddCourse(Guid authorId, Course course);
     void UpdateCourse(Course course);
     void DeleteCourse(Course course);
