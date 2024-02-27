@@ -89,7 +89,12 @@ public class CoursesController : ControllerBase
         Course? courseFromDb = await _repo.GetCourseAsync(authorId, courseId);
         if (courseFromDb is null)
         {
-            return NotFound();
+            Course courseToAdd = _mapper.Map<Course>(courseForUpdateDto);
+            _repo.AddCourse(authorId, courseToAdd);
+            await _repo.SaveAsync();
+            
+            CourseDto courseToReturn = _mapper.Map<CourseDto>(courseToAdd);
+            return CreatedAtRoute("GetCourseForAuthor", new { authorId, courseId }, courseToReturn);
         }
 
         _mapper.Map(courseForUpdateDto, courseFromDb);
