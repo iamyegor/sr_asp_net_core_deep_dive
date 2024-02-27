@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CourseLibrary.API.Entities;
 using CourseLibrary.API.Models;
 using CourseLibrary.API.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,6 @@ public class AuthorsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AuthorDto>>> GetAuthors()
     {
-        throw new Exception("fictional exception");
         var authorsFromRepo = await _courseLibraryRepository.GetAuthorsAsync();
 
         return Ok(_mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo));
@@ -42,9 +42,9 @@ public class AuthorsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<AuthorDto>> CreateAuthor(AuthorDto author)
+    public async Task<ActionResult<AuthorDto>> CreateAuthor(AuthorForCreationDto author)
     {
-        var authorEntity = _mapper.Map<Entities.Author>(author);
+        var authorEntity = _mapper.Map<Author>(author);
 
         _courseLibraryRepository.AddAuthor(authorEntity);
         await _courseLibraryRepository.SaveAsync();

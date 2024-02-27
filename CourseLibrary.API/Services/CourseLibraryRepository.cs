@@ -35,7 +35,7 @@ public class CourseLibraryRepository : ICourseLibraryRepository
         _context.Courses.Remove(course);
     }
 
-    public async Task<Course> GetCourseAsync(Guid authorId, Guid courseId)
+    public async Task<Course?> GetCourseAsync(Guid authorId, Guid courseId)
     {
         if (authorId == Guid.Empty)
         {
@@ -47,11 +47,9 @@ public class CourseLibraryRepository : ICourseLibraryRepository
             throw new ArgumentNullException(nameof(courseId));
         }
 
-#pragma warning disable CS8603 // Possible null reference return.
         return await _context
             .Courses.Where(c => c.AuthorId == authorId && c.Id == courseId)
             .FirstOrDefaultAsync();
-#pragma warning restore CS8603 // Possible null reference return.
     }
 
     public async Task<IEnumerable<Course>> GetCoursesAsync(Guid authorId)
