@@ -2,6 +2,7 @@
 using CourseLibrary.API.Entities;
 using CourseLibrary.API.Models;
 using CourseLibrary.API.Services;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseLibrary.API.Controllers;
@@ -85,13 +86,41 @@ public class CoursesController : ControllerBase
             return NotFound();
         }
 
-        Course? courseFromDb = await _repo.GetCourseAsync(authorId, courseId); 
+        Course? courseFromDb = await _repo.GetCourseAsync(authorId, courseId);
         if (courseFromDb is null)
         {
             return NotFound();
         }
 
         _mapper.Map(courseForUpdateDto, courseFromDb);
+        _repo.UpdateCourse(courseFromDb);
+        await _repo.SaveAsync();
+
+        return NoContent();
+    }
+
+    [HttpPatch("{courseId}")]
+    public async Task<IActionResult> PartiallyUpdateCourseForAuthor(
+        Guid authorId,
+        Guid courseId,
+        JsonPatchDocument<CourseForUpdateDto> patchDocument
+    )
+    {
+        if (!await _repo.AuthorExistsAsync(authorId))
+        {
+            return NotFound();
+        }
+
+        Course? courseFromDb = await _repo.GetCourseAsync(authorId, courseId);
+        if (courseFromDb == null)
+        {
+            return NotFound();
+        }
+
+        CourseForUpdateDto courseToPatch = _mapper.Map<CourseForUpdateDto>(courseFromDb);
+        patchDocument.ApplyTo(courseToPatch);
+        _mapper.Map(courseToPatch, courseFromDb);
+
         _repo.UpdateCourse(courseFromDb);
         await _repo.SaveAsync();
 
