@@ -22,6 +22,7 @@ public class AuthorsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AuthorDto>>> GetAuthors()
     {
+        throw new Exception("fictional exception");
         var authorsFromRepo = await _courseLibraryRepository.GetAuthorsAsync();
 
         return Ok(_mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo));
