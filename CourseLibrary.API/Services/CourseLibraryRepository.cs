@@ -1,10 +1,10 @@
 ﻿using CourseLibrary.API.DbContexts;
-using CourseLibrary.API.Entities; 
+using CourseLibrary.API.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseLibrary.API.Services;
 
-public class CourseLibraryRepository : ICourseLibraryRepository 
+public class CourseLibraryRepository : ICourseLibraryRepository
 {
     private readonly CourseLibraryContext _context;
 
@@ -48,8 +48,9 @@ public class CourseLibraryRepository : ICourseLibraryRepository
         }
 
 #pragma warning disable CS8603 // Possible null reference return.
-        return await _context.Courses
-          .Where(c => c.AuthorId == authorId && c.Id == courseId).FirstOrDefaultAsync();
+        return await _context
+            .Courses.Where(c => c.AuthorId == authorId && c.Id == courseId)
+            .FirstOrDefaultAsync();
 #pragma warning restore CS8603 // Possible null reference return.
     }
 
@@ -60,9 +61,10 @@ public class CourseLibraryRepository : ICourseLibraryRepository
             throw new ArgumentNullException(nameof(authorId));
         }
 
-        return await _context.Courses
-                    .Where(c => c.AuthorId == authorId)
-                    .OrderBy(c => c.Title).ToListAsync();
+        return await _context
+            .Courses.Where(c => c.AuthorId == authorId)
+            .OrderBy(c => c.Title)
+            .ToListAsync();
     }
 
     public void UpdateCourse(Course course)
@@ -100,27 +102,21 @@ public class CourseLibraryRepository : ICourseLibraryRepository
 
     public void DeleteAuthor(Author author)
     {
-        if (author == null)
-        {
-            throw new ArgumentNullException(nameof(author));
-        }
+        ArgumentNullException.ThrowIfNull(author);
 
         _context.Authors.Remove(author);
     }
 
-    public async Task<Author> GetAuthorAsync(Guid authorId)
+    public async Task<Author?> GetAuthorAsync(Guid authorId)
     {
         if (authorId == Guid.Empty)
         {
             throw new ArgumentNullException(nameof(authorId));
         }
 
-#pragma warning disable CS8603 // Possible null reference return.
         return await _context.Authors.FirstOrDefaultAsync(a => a.Id == authorId);
-#pragma warning restore CS8603 // Possible null reference return.
     }
 
-   
     public async Task<IEnumerable<Author>> GetAuthorsAsync()
     {
         return await _context.Authors.ToListAsync();
@@ -128,14 +124,12 @@ public class CourseLibraryRepository : ICourseLibraryRepository
 
     public async Task<IEnumerable<Author>> GetAuthorsAsync(IEnumerable<Guid> authorIds)
     {
-        if (authorIds == null)
-        {
-            throw new ArgumentNullException(nameof(authorIds));
-        }
+        ArgumentNullException.ThrowIfNull(authorIds);
 
-        return await _context.Authors.Where(a => authorIds.Contains(a.Id))
+        return await _context
+            .Authors.Where(a => authorIds.Contains(a.Id))
             .OrderBy(a => a.FirstName)
-            .OrderBy(a => a.LastName)
+            .ThenBy(a => a.LastName)
             .ToListAsync();
     }
 
@@ -149,4 +143,3 @@ public class CourseLibraryRepository : ICourseLibraryRepository
         return (await _context.SaveChangesAsync() >= 0);
     }
 }
-
