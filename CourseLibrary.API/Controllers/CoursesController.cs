@@ -75,36 +75,6 @@ public class CoursesController : ControllerBase
         );
     }
 
-    [HttpPut("{courseId}")]
-    public async Task<IActionResult> UpdateCourseForAuthor(
-        Guid authorId,
-        Guid courseId,
-        CourseDto course
-    )
-    {
-        if (!await _courseLibraryRepository.AuthorExistsAsync(authorId))
-        {
-            return NotFound();
-        }
-
-        var courseForAuthorFromRepo = await _courseLibraryRepository.GetCourseAsync(
-            authorId,
-            courseId
-        );
-
-        if (courseForAuthorFromRepo == null)
-        {
-            return NotFound();
-        }
-
-        _mapper.Map(course, courseForAuthorFromRepo);
-
-        _courseLibraryRepository.UpdateCourse(courseForAuthorFromRepo);
-
-        await _courseLibraryRepository.SaveAsync();
-        return NoContent();
-    }
-
     [HttpDelete("{courseId}")]
     public async Task<ActionResult> DeleteCourseForAuthor(Guid authorId, Guid courseId)
     {
