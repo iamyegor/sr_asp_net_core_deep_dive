@@ -1,11 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "outBXIUawVKvmq3P4XcGLK72laB4XFSr0PTT1nC7gnB27PMStmmRZ5L+SH1UGiReDKS5ubv3qLpwRESO/V0ZCw==",
+  "dgSpecHash": "xSckVDryZn2ORaa12NHwFdA8AiPbA8nnbYTsyyq0JnaZeP+w1kCKpdc2mfdmvo08c9GLXl7j4jBEvF7++RQGZg==",
   "success": true,
   "projectFilePath": "/home/yegor/RiderProjects/sr_asp_net_core_deep_dive/Starter files/CourseLibrary.API/CourseLibrary.API.csproj",
   "expectedPackageFiles": [
     "/home/yegor/.nuget/packages/automapper/12.0.1/automapper.12.0.1.nupkg.sha512",
     "/home/yegor/.nuget/packages/automapper.extensions.microsoft.dependencyinjection/12.0.1/automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
+    "/home/yegor/.nuget/packages/fluentvalidation/11.9.0/fluentvalidation.11.9.0.nupkg.sha512",
+    "/home/yegor/.nuget/packages/fluentvalidation.dependencyinjectionextensions/11.9.0/fluentvalidation.dependencyinjectionextensions.11.9.0.nupkg.sha512",
     "/home/yegor/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/home/yegor/.nuget/packages/microsoft.aspnetcore.jsonpatch/8.0.1/microsoft.aspnetcore.jsonpatch.8.0.1.nupkg.sha512",
     "/home/yegor/.nuget/packages/microsoft.aspnetcore.mvc.newtonsoftjson/8.0.1/microsoft.aspnetcore.mvc.newtonsoftjson.8.0.1.nupkg.sha512",
@@ -38,6 +40,8 @@
     "/home/yegor/.nuget/packages/mono.texttemplating/2.2.1/mono.texttemplating.2.2.1.nupkg.sha512",
     "/home/yegor/.nuget/packages/newtonsoft.json/13.0.3/newtonsoft.json.13.0.3.nupkg.sha512",
     "/home/yegor/.nuget/packages/newtonsoft.json.bson/1.0.2/newtonsoft.json.bson.1.0.2.nupkg.sha512",
+    "/home/yegor/.nuget/packages/sharpgrip.fluentvalidation.autovalidation.mvc/1.4.0/sharpgrip.fluentvalidation.autovalidation.mvc.1.4.0.nupkg.sha512",
+    "/home/yegor/.nuget/packages/sharpgrip.fluentvalidation.autovalidation.shared/1.4.0/sharpgrip.fluentvalidation.autovalidation.shared.1.4.0.nupkg.sha512",
     "/home/yegor/.nuget/packages/sqlitepclraw.bundle_e_sqlite3/2.1.6/sqlitepclraw.bundle_e_sqlite3.2.1.6.nupkg.sha512",
     "/home/yegor/.nuget/packages/sqlitepclraw.core/2.1.6/sqlitepclraw.core.2.1.6.nupkg.sha512",
     "/home/yegor/.nuget/packages/sqlitepclraw.lib.e_sqlite3/2.1.6/sqlitepclraw.lib.e_sqlite3.2.1.6.nupkg.sha512",

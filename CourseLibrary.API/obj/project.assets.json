@@ -31,6 +31,36 @@
           "lib/netstandard2.1/AutoMapper.Extensions.Microsoft.DependencyInjection.dll": {}
         }
       },
+      "FluentValidation/11.9.0": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/FluentValidation.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/FluentValidation.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "FluentValidation.DependencyInjectionExtensions/11.9.0": {
+        "type": "package",
+        "dependencies": {
+          "FluentValidation": "11.9.0",
+          "Microsoft.Extensions.Dependencyinjection.Abstractions": "2.1.0"
+        },
+        "compile": {
+          "lib/netstandard2.1/FluentValidation.DependencyInjectionExtensions.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.1/FluentValidation.DependencyInjectionExtensions.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Humanizer.Core/2.14.1": {
         "type": "package",
         "compile": {
@@ -726,6 +756,33 @@
           }
         }
       },
+      "SharpGrip.FluentValidation.AutoValidation.Mvc/1.4.0": {
+        "type": "package",
+        "dependencies": {
+          "SharpGrip.FluentValidation.AutoValidation.Shared": "1.4.0"
+        },
+        "compile": {
+          "lib/net8.0/SharpGrip.FluentValidation.AutoValidation.Mvc.dll": {}
+        },
+        "runtime": {
+          "lib/net8.0/SharpGrip.FluentValidation.AutoValidation.Mvc.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
+      "SharpGrip.FluentValidation.AutoValidation.Shared/1.4.0": {
+        "type": "package",
+        "dependencies": {
+          "FluentValidation": "10.0.0"
+        },
+        "compile": {
+          "lib/net8.0/SharpGrip.FluentValidation.AutoValidation.Shared.dll": {}
+        },
+        "runtime": {
+          "lib/net8.0/SharpGrip.FluentValidation.AutoValidation.Shared.dll": {}
+        }
+      },
       "SQLitePCLRaw.bundle_e_sqlite3/2.1.6": {
         "type": "package",
         "dependencies": {
@@ -1163,6 +1220,48 @@
         "automapper.extensions.microsoft.dependencyinjection.nuspec",
         "icon.png",
         "lib/netstandard2.1/AutoMapper.Extensions.Microsoft.DependencyInjection.dll"
+      ]
+    },
+    "FluentValidation/11.9.0": {
+      "sha512": "VneVlTvwYDkfHV5av3QrQ0amALgrLX6LV94wlYyEsh0B/klJBW7C8y2eAtj5tOZ3jH6CAVpr4s1ZGgew/QWyig==",
+      "type": "package",
+      "path": "fluentvalidation/11.9.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "fluent-validation-icon.png",
+        "fluentvalidation.11.9.0.nupkg.sha512",
+        "fluentvalidation.nuspec",
+        "lib/net5.0/FluentValidation.dll",
+        "lib/net5.0/FluentValidation.xml",
+        "lib/net6.0/FluentValidation.dll",
+        "lib/net6.0/FluentValidation.xml",
+        "lib/net7.0/FluentValidation.dll",
+        "lib/net7.0/FluentValidation.xml",
+        "lib/net8.0/FluentValidation.dll",
+        "lib/net8.0/FluentValidation.xml",
+        "lib/netstandard2.0/FluentValidation.dll",
+        "lib/netstandard2.0/FluentValidation.xml",
+        "lib/netstandard2.1/FluentValidation.dll",
+        "lib/netstandard2.1/FluentValidation.xml"
+      ]
+    },
+    "FluentValidation.DependencyInjectionExtensions/11.9.0": {
+      "sha512": "Ko++xvN7HUf4WlHJL6bhsybUj/uho8ApOYIdxGjpF8Ot7Fukz6LRfRJ06H0KXhWqmMHWEbu89hJbjKJHtg7b9g==",
+      "type": "package",
+      "path": "fluentvalidation.dependencyinjectionextensions/11.9.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "fluent-validation-icon.png",
+        "fluentvalidation.dependencyinjectionextensions.11.9.0.nupkg.sha512",
+        "fluentvalidation.dependencyinjectionextensions.nuspec",
+        "lib/netstandard2.0/FluentValidation.DependencyInjectionExtensions.dll",
+        "lib/netstandard2.0/FluentValidation.DependencyInjectionExtensions.xml",
+        "lib/netstandard2.1/FluentValidation.DependencyInjectionExtensions.dll",
+        "lib/netstandard2.1/FluentValidation.DependencyInjectionExtensions.xml"
       ]
     },
     "Humanizer.Core/2.14.1": {
@@ -2310,6 +2409,40 @@
         "newtonsoft.json.bson.nuspec"
       ]
     },
+    "SharpGrip.FluentValidation.AutoValidation.Mvc/1.4.0": {
+      "sha512": "WoGehoErTtAt4CYieSN4GP56r4ZT1H+HDtAg/dNusTcgLRFsglDWhR8xMuZVZCni8XTGsIsz3Ak4NumqQ+r0Ww==",
+      "type": "package",
+      "path": "sharpgrip.fluentvalidation.autovalidation.mvc/1.4.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net6.0/SharpGrip.FluentValidation.AutoValidation.Mvc.dll",
+        "lib/net7.0/SharpGrip.FluentValidation.AutoValidation.Mvc.dll",
+        "lib/net8.0/SharpGrip.FluentValidation.AutoValidation.Mvc.dll",
+        "lib/netcoreapp3.1/SharpGrip.FluentValidation.AutoValidation.Mvc.dll",
+        "sharpgrip.fluentvalidation.autovalidation.mvc.1.4.0.nupkg.sha512",
+        "sharpgrip.fluentvalidation.autovalidation.mvc.nuspec"
+      ]
+    },
+    "SharpGrip.FluentValidation.AutoValidation.Shared/1.4.0": {
+      "sha512": "X1tecd17OBUIEs9i/I9uqaSs4OXs0qLXMYsiKsTKmIl4xGsWu7hF0umM2jtvblhUvPskZMYNMiaoGJitwT0xxg==",
+      "type": "package",
+      "path": "sharpgrip.fluentvalidation.autovalidation.shared/1.4.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net6.0/SharpGrip.FluentValidation.AutoValidation.Shared.dll",
+        "lib/net7.0/SharpGrip.FluentValidation.AutoValidation.Shared.dll",
+        "lib/net8.0/SharpGrip.FluentValidation.AutoValidation.Shared.dll",
+        "lib/netcoreapp3.1/SharpGrip.FluentValidation.AutoValidation.Shared.dll",
+        "lib/netstandard2.0/SharpGrip.FluentValidation.AutoValidation.Shared.dll",
+        "lib/netstandard2.1/SharpGrip.FluentValidation.AutoValidation.Shared.dll",
+        "sharpgrip.fluentvalidation.autovalidation.shared.1.4.0.nupkg.sha512",
+        "sharpgrip.fluentvalidation.autovalidation.shared.nuspec"
+      ]
+    },
     "SQLitePCLRaw.bundle_e_sqlite3/2.1.6": {
       "sha512": "BmAf6XWt4TqtowmiWe4/5rRot6GerAeklmOPfviOvwLoF5WwgxcJHAxZtySuyW9r9w+HLILnm8VfJFLCUJYW8A==",
       "type": "package",
@@ -2847,11 +2980,13 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "AutoMapper.Extensions.Microsoft.DependencyInjection >= 12.0.1",
+      "FluentValidation.DependencyInjectionExtensions >= 11.9.0",
       "Microsoft.AspNetCore.JsonPatch >= 8.0.1",
       "Microsoft.AspNetCore.Mvc.NewtonsoftJson >= 8.0.1",
       "Microsoft.EntityFrameworkCore >= 8.0.0",
       "Microsoft.EntityFrameworkCore.Sqlite >= 8.0.0",
-      "Microsoft.EntityFrameworkCore.Tools >= 8.0.0"
+      "Microsoft.EntityFrameworkCore.Tools >= 8.0.0",
+      "SharpGrip.FluentValidation.AutoValidation.Mvc >= 1.4.0"
     ]
   },
   "packageFolders": {
@@ -2895,6 +3030,10 @@
             "target": "Package",
             "version": "[12.0.1, )"
           },
+          "FluentValidation.DependencyInjectionExtensions": {
+            "target": "Package",
+            "version": "[11.9.0, )"
+          },
           "Microsoft.AspNetCore.JsonPatch": {
             "target": "Package",
             "version": "[8.0.1, )"
@@ -2916,6 +3055,10 @@
             "suppressParent": "All",
             "target": "Package",
             "version": "[8.0.0, )"
+          },
+          "SharpGrip.FluentValidation.AutoValidation.Mvc": {
+            "target": "Package",
+            "version": "[1.4.0, )"
           }
         },
         "imports": [

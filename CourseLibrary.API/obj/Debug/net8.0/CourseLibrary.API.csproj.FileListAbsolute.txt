@@ -126,3 +126,8 @@
 /home/yegor/RiderProjects/sr_asp_net_core_deep_dive/Starter files/CourseLibrary.API/bin/Debug/net8.0/Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
 /home/yegor/RiderProjects/sr_asp_net_core_deep_dive/Starter files/CourseLibrary.API/bin/Debug/net8.0/Newtonsoft.Json.dll
 /home/yegor/RiderProjects/sr_asp_net_core_deep_dive/Starter files/CourseLibrary.API/bin/Debug/net8.0/Newtonsoft.Json.Bson.dll
+/home/yegor/RiderProjects/sr_asp_net_core_deep_dive/Starter files/CourseLibrary.API/bin/Debug/net8.0/FluentValidation.dll
+/home/yegor/RiderProjects/sr_asp_net_core_deep_dive/Starter files/CourseLibrary.API/bin/Debug/net8.0/FluentValidation.DependencyInjectionExtensions.dll
+/home/yegor/RiderProjects/sr_asp_net_core_deep_dive/Starter files/CourseLibrary.API/bin/Debug/net8.0/SharpGrip.FluentValidation.AutoValidation.Mvc.dll
+/home/yegor/RiderProjects/sr_asp_net_core_deep_dive/Starter files/CourseLibrary.API/bin/Debug/net8.0/SharpGrip.FluentValidation.AutoValidation.Shared.dll
+/home/yegor/RiderProjects/sr_asp_net_core_deep_dive/Starter files/CourseLibrary.API/obj/Debug/net8.0/CourseLibrary.API.MvcApplicationPartsAssemblyInfo.cs

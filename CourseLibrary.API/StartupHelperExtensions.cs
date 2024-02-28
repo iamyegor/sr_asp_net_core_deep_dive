@@ -1,7 +1,12 @@
 ﻿using CourseLibrary.API.DbContexts;
 using CourseLibrary.API.Services;
+using CourseLibrary.API.Validations;
+using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 namespace CourseLibrary.API;
 
@@ -20,7 +25,29 @@ internal static class StartupHelperExtensions
                 appBuilder.SerializerSettings.ContractResolver =
                     new CamelCasePropertyNamesContractResolver();
             })
-            .AddXmlDataContractSerializerFormatters();
+            .AddXmlDataContractSerializerFormatters()
+            .ConfigureApiBehaviorOptions(setupAction =>
+            {
+                setupAction.InvalidModelStateResponseFactory = context =>
+                {
+                    var problemDetailsFactory =
+                        context.HttpContext.RequestServices.GetRequiredService<ProblemDetailsFactory>();
+
+                    var validationProblemDetails =
+                        problemDetailsFactory.CreateValidationProblemDetails(
+                            context.HttpContext,
+                            context.ModelState
+                        );
+
+                    validationProblemDetails.Instance = context.HttpContext.Request.Path;
+                    validationProblemDetails.Status = StatusCodes.Status422UnprocessableEntity;
+
+                    return new UnprocessableEntityObjectResult(validationProblemDetails)
+                    {
+                        ContentTypes = { "application/problem+json" }
+                    };
+                };
+            });
 
         builder.Services.AddScoped<ICourseLibraryRepository, CourseLibraryRepository>();
 
@@ -30,6 +57,12 @@ internal static class StartupHelperExtensions
         });
 
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+        builder.Services.AddValidatorsFromAssemblyContaining<IValidatorsAssembly>();
+        builder.Services.AddFluentValidationAutoValidation(options =>
+        {
+            options.OverrideDefaultResultFactoryWith<CustomResultFactory>();
+        });
 
         return builder.Build();
     }
