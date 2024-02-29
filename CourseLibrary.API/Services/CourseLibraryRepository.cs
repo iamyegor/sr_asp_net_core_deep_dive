@@ -1,5 +1,8 @@
-﻿using CourseLibrary.API.DbContexts;
+﻿using CourseLibrary.API.Controllers;
+using CourseLibrary.API.DbContexts;
 using CourseLibrary.API.Entities;
+using CourseLibrary.API.Helpers;
+using CourseLibrary.API.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseLibrary.API.Services;
@@ -115,9 +118,13 @@ public class CourseLibraryRepository : ICourseLibraryRepository
         return await _context.Authors.FirstOrDefaultAsync(a => a.Id == authorId);
     }
 
-    public async Task<IEnumerable<Author>> GetAuthorsAsync()
+    public async Task<IEnumerable<Author>?> GetAuthorsAsync(AuthorParameters authorParameters)
     {
-        return await _context.Authors.ToListAsync();
+        IQueryable<Author> collection = _context.Authors;
+
+        collection = collection.ApplyFiltering(authorParameters);
+        
+        return await collection.ToListAsync();
     }
 
     public async Task<IEnumerable<Author>> GetAuthorsAsync(IEnumerable<Guid> authorIds)

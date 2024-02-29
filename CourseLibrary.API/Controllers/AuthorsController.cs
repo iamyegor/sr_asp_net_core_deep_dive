@@ -21,9 +21,11 @@ public class AuthorsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<AuthorDto>>> GetAuthors()
+    public async Task<ActionResult<IEnumerable<AuthorDto>>> GetAuthors(
+        [FromQuery] AuthorParameters authorParameters
+    )
     {
-        var authorsFromRepo = await _courseLibraryRepository.GetAuthorsAsync();
+        var authorsFromRepo = await _courseLibraryRepository.GetAuthorsAsync(authorParameters);
 
         return Ok(_mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo));
     }
