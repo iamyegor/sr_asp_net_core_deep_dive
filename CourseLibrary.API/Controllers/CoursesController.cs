@@ -109,6 +109,8 @@ public class CoursesController : ControllerBase
         if (courseFromDb is null)
         {
             Course courseToAdd = _mapper.Map<Course>(courseForUpdateDto);
+            courseToAdd.Id = courseId;
+            
             _repo.AddCourse(authorId, courseToAdd);
             await _repo.SaveAsync();
 
@@ -164,6 +166,7 @@ public class CoursesController : ControllerBase
         }
 
         Course courseToAdd = _mapper.Map<Course>(courseForUpdateToPatch);
+        courseToAdd.Id = courseId;
 
         _repo.AddCourse(authorId, courseToAdd);
         await _repo.SaveAsync();
