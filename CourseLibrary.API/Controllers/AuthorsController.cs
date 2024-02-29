@@ -18,37 +18,39 @@ public class AuthorsController : ControllerBase
     private readonly IMapper _mapper;
     private readonly PropertyMappingService _propertyMappingService;
     private readonly ProblemDetailsFactory _problemDetailsFactory;
+    private readonly PropertyChecker _propertyChecker;
 
     public AuthorsController(
         ICourseLibraryRepository courseLibraryRepository,
         IMapper mapper,
         PropertyMappingService propertyMappingService,
-        ProblemDetailsFactory problemDetailsFactory
+        ProblemDetailsFactory problemDetailsFactory,
+        PropertyChecker propertyChecker
     )
     {
         _courseLibraryRepository =
             courseLibraryRepository
             ?? throw new ArgumentNullException(nameof(courseLibraryRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        _propertyChecker = Guard.Against.Null(propertyChecker);
         _problemDetailsFactory = Guard.Against.Null(problemDetailsFactory);
         _propertyMappingService = Guard.Against.Null(propertyMappingService);
     }
 
     [HttpGet(Name = "GetAuthors")]
-    public async Task<ActionResult<IEnumerable<AuthorDto>>> GetAuthors(
-        [FromQuery] AuthorsParameters authorsParameters
-    )
+    public async Task<IActionResult> GetAuthors([FromQuery] AuthorsParameters authorsParameters)
     {
         if (!_propertyMappingService.HasMappingsFor<AuthorDto, Author>(authorsParameters.OrderBy))
         {
-            return BadRequest(
-                _problemDetailsFactory.CreateProblemDetails(
-                    HttpContext,
-                    detail: $"orderBy contains incorrect property(s): {authorsParameters.OrderBy}",
-                    statusCode: 400,
-                    instance: HttpContext.Request.Path,
-                    title: "Bad Request"
-                )
+            return BadRequestWithDetail(
+                $"orderBy contains incorrect property(s): {authorsParameters.OrderBy}"
+            );
+        }
+
+        if (!_propertyChecker.HasPropertiesForDataShaping<AuthorDto>(authorsParameters.Fields))
+        {
+            return BadRequestWithDetail(
+                $"Author doesn't have some of the provided fields: {authorsParameters.Fields}"
             );
         }
 
@@ -77,7 +79,22 @@ public class AuthorsController : ControllerBase
             JsonConvert.SerializeObject(paginationMetadata)
         );
 
-        return Ok(_mapper.Map<IEnumerable<AuthorDto>>(pagedAuthors));
+        return Ok(
+            _mapper.Map<IEnumerable<AuthorDto>>(pagedAuthors).ShapeData(authorsParameters.Fields)
+        );
+    }
+
+    private ActionResult BadRequestWithDetail(string detail)
+    {
+        return BadRequest(
+            _problemDetailsFactory.CreateProblemDetails(
+                HttpContext,
+                detail: detail,
+                statusCode: 400,
+                instance: HttpContext.Request.Path,
+                title: "Bad Request"
+            )
+        );
     }
 
     private string? CreateAuthorsUri(ResourceUriType uriType, AuthorsParameters authorsParameters)
@@ -101,8 +118,15 @@ public class AuthorsController : ControllerBase
     }
 
     [HttpGet("{authorId}", Name = "GetAuthor")]
-    public async Task<ActionResult<AuthorDto>> GetAuthor(Guid authorId)
+    public async Task<ActionResult<AuthorDto>> GetAuthor(Guid authorId, [FromQuery] string? fields)
     {
+        if (!_propertyChecker.HasPropertiesForDataShaping<AuthorDto>(fields))
+        {
+            return BadRequestWithDetail(
+                $"Author doesn't have some of the provided fields: {fields}"
+            );
+        }
+        
         var authorFromRepo = await _courseLibraryRepository.GetAuthorAsync(authorId);
 
         if (authorFromRepo == null)
@@ -110,7 +134,7 @@ public class AuthorsController : ControllerBase
             return NotFound();
         }
 
-        return Ok(_mapper.Map<AuthorDto>(authorFromRepo));
+        return Ok(_mapper.Map<AuthorDto>(authorFromRepo).ShapeData(fields));
     }
 
     [HttpPost]

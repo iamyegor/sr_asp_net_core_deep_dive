@@ -13,4 +13,6 @@ public class AuthorsParameters
     }
     private int _pageSize = MaxPageSize;
     public string? OrderBy { get; set; }
+
+    public string? Fields { get; set; }
 }

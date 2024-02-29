@@ -1,4 +1,5 @@
 ﻿using CourseLibrary.API.DbContexts;
+using CourseLibrary.API.Helpers;
 using CourseLibrary.API.Helpers.PropertyMapping;
 using CourseLibrary.API.Services;
 using CourseLibrary.API.Validations;
@@ -66,6 +67,8 @@ internal static class StartupHelperExtensions
         });
 
         builder.Services.AddTransient<PropertyMappingService>();
+
+        builder.Services.AddTransient<PropertyChecker>();
 
         return builder.Build();
     }
