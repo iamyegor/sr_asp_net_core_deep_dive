@@ -8,7 +8,7 @@ public static class IQueryableExtensions
 {
     public static IQueryable<Author> ApplyFiltering(
         this IQueryable<Author> query,
-        AuthorParameters parameters
+        AuthorsParameters parameters
     )
     {
         ArgumentNullException.ThrowIfNull(query);

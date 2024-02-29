@@ -118,14 +118,18 @@ public class CourseLibraryRepository : ICourseLibraryRepository
         return await _context.Authors.FirstOrDefaultAsync(a => a.Id == authorId);
     }
 
-    public async Task<IEnumerable<Author>?> GetAuthorsAsync(AuthorParameters authorParameters)
+    public async Task<PagedList<Author>> GetAuthorsAsync(AuthorsParameters authorsParameters)
     {
         IQueryable<Author> collection = _context.Authors;
 
-        collection = collection.ApplyFiltering(authorParameters);
-        collection = collection.ApplySearching(authorParameters.SearchQuery);
+        collection = collection.ApplyFiltering(authorsParameters);
+        collection = collection.ApplySearching(authorsParameters.SearchQuery);
 
-        return await collection.ToListAsync();
+        return await PagedList<Author>.Create(
+            collection,
+            authorsParameters.PageNumber,
+            authorsParameters.PageSize
+        );
     }
 
     public async Task<IEnumerable<Author>> GetAuthorsAsync(IEnumerable<Guid> authorIds)
