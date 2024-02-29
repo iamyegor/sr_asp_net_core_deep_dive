@@ -12,4 +12,5 @@ public class AuthorsParameters
         set => _pageSize = value > MaxPageSize ? MaxPageSize : value;
     }
     private int _pageSize = MaxPageSize;
+    public string? OrderBy { get; set; }
 }

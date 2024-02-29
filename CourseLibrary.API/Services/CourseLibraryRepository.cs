@@ -1,7 +1,9 @@
-﻿using CourseLibrary.API.Controllers;
+﻿using Ardalis.GuardClauses;
 using CourseLibrary.API.DbContexts;
 using CourseLibrary.API.Entities;
 using CourseLibrary.API.Helpers;
+using CourseLibrary.API.Helpers.IQueryableExtensions;
+using CourseLibrary.API.Helpers.PropertyMapping;
 using CourseLibrary.API.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,10 +12,15 @@ namespace CourseLibrary.API.Services;
 public class CourseLibraryRepository : ICourseLibraryRepository
 {
     private readonly CourseLibraryContext _context;
+    private readonly PropertyMappingService _propertyMappingService;
 
-    public CourseLibraryRepository(CourseLibraryContext context)
+    public CourseLibraryRepository(
+        CourseLibraryContext context,
+        PropertyMappingService propertyMappingService
+    )
     {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _context = Guard.Against.Null(context);
+        _propertyMappingService = Guard.Against.Null(propertyMappingService);
     }
 
     public void AddCourse(Guid authorId, Course course)
@@ -124,6 +131,12 @@ public class CourseLibraryRepository : ICourseLibraryRepository
 
         collection = collection.ApplyFiltering(authorsParameters);
         collection = collection.ApplySearching(authorsParameters.SearchQuery);
+
+        Dictionary<string, PropertyMappingValue> mappings = _propertyMappingService.GetMappings<
+            AuthorDto,
+            Author
+        >();
+        collection = collection.ApplySort(authorsParameters.OrderBy, mappings);
 
         return await PagedList<Author>.Create(
             collection,

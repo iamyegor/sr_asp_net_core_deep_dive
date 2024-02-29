@@ -1,4 +1,5 @@
 ﻿using CourseLibrary.API.DbContexts;
+using CourseLibrary.API.Helpers.PropertyMapping;
 using CourseLibrary.API.Services;
 using CourseLibrary.API.Validations;
 using FluentValidation;
@@ -63,6 +64,8 @@ internal static class StartupHelperExtensions
         {
             options.OverrideDefaultResultFactoryWith<CustomResultFactory>();
         });
+
+        builder.Services.AddTransient<PropertyMappingService>();
 
         return builder.Build();
     }

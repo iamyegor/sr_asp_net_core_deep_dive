@@ -1,10 +1,10 @@
 using CourseLibrary.API.Entities;
 using CourseLibrary.API.Models;
 
-namespace CourseLibrary.API.Helpers;
+namespace CourseLibrary.API.Helpers.IQueryableExtensions;
 
 // ReSharper disable once InconsistentNaming
-public static class IQueryableExtensions
+public static class ForAuthor
 {
     public static IQueryable<Author> ApplyFiltering(
         this IQueryable<Author> query,
