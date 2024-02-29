@@ -123,7 +123,8 @@ public class CourseLibraryRepository : ICourseLibraryRepository
         IQueryable<Author> collection = _context.Authors;
 
         collection = collection.ApplyFiltering(authorParameters);
-        
+        collection = collection.ApplySearching(authorParameters.SearchQuery);
+
         return await collection.ToListAsync();
     }
 
