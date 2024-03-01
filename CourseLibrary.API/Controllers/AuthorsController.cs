@@ -126,7 +126,7 @@ public class AuthorsController : ControllerBase
                 $"Author doesn't have some of the provided fields: {fields}"
             );
         }
-        
+
         var authorFromRepo = await _courseLibraryRepository.GetAuthorAsync(authorId);
 
         if (authorFromRepo == null)
@@ -134,7 +134,33 @@ public class AuthorsController : ControllerBase
             return NotFound();
         }
 
-        return Ok(_mapper.Map<AuthorDto>(authorFromRepo).ShapeData(fields));
+        IDictionary<string, object?> shapedAuthorWithLinks = _mapper
+            .Map<AuthorDto>(authorFromRepo)
+            .ShapeData(fields);
+
+        shapedAuthorWithLinks.Add("links", CreateLinksForAuthor(authorId, fields));
+
+        return Ok(shapedAuthorWithLinks);
+    }
+
+    private IEnumerable<LinkDto> CreateLinksForAuthor(Guid authorId, string? fields)
+    {
+        List<LinkDto> links = [];
+
+        string selfUrl =
+            fields == null
+                ? Url.Link("GetAuthor", new { authorId })!
+                : Url.Link("GetAuthor", new { authorId, fields })!;
+        
+        links.Add(new LinkDto(selfUrl, "self", "GET"));
+
+        string createCourseUrl = Url.Link("CreateCourseForAuthor", new { authorId })!;
+        links.Add(new LinkDto(createCourseUrl, "create_course_for_author", "POST"));
+
+        string getCoursesUrl = Url.Link("GetCoursesForAuthor", new { authorId })!;
+        links.Add(new LinkDto(getCoursesUrl, "get_courses_for_author", "GET"));
+
+        return links;
     }
 
     [HttpPost]

@@ -18,13 +18,11 @@ public class CoursesController : ControllerBase
 {
     private readonly ICourseLibraryRepository _repo;
     private readonly IMapper _mapper;
-    private readonly ProblemDetailsFactory _problemDetailsFactory;
     private readonly IValidator<CourseForUpdateDto> _courseForUpdateValidator;
 
     public CoursesController(
         ICourseLibraryRepository courseLibraryRepository,
         IMapper mapper,
-        ProblemDetailsFactory problemDetailsFactory,
         IValidator<CourseForUpdateDto> courseForUpdateValidator
     )
     {
@@ -34,14 +32,12 @@ public class CoursesController : ControllerBase
 
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
-        _problemDetailsFactory =
-            problemDetailsFactory ?? throw new ArgumentNullException(nameof(problemDetailsFactory));
         _courseForUpdateValidator =
             courseForUpdateValidator
             ?? throw new ArgumentNullException(nameof(courseForUpdateValidator));
     }
 
-    [HttpGet]
+    [HttpGet(Name="GetCoursesForAuthor")]
     public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesForAuthor(Guid authorId)
     {
         if (!await _repo.AuthorExistsAsync(authorId))
@@ -70,7 +66,7 @@ public class CoursesController : ControllerBase
         return Ok(_mapper.Map<CourseDto>(courseForAuthorFromRepo));
     }
 
-    [HttpPost]
+    [HttpPost(Name="CreateCourseForAuthor")]
     public async Task<ActionResult<CourseDto>> CreateCourseForAuthor(
         Guid authorId,
         CourseForCreationDto course
@@ -110,7 +106,7 @@ public class CoursesController : ControllerBase
         {
             Course courseToAdd = _mapper.Map<Course>(courseForUpdateDto);
             courseToAdd.Id = courseId;
-            
+
             _repo.AddCourse(authorId, courseToAdd);
             await _repo.SaveAsync();
 
@@ -232,14 +228,11 @@ public class CoursesController : ControllerBase
         }
         catch (Exception) // in case of patchDocument being in incorrect format
         {
-            return BadRequest(
-                _problemDetailsFactory.CreateProblemDetails(
-                    HttpContext,
-                    detail: "The JSON Patch Document is in incorrect format",
-                    statusCode: 400,
-                    instance: HttpContext.Request.Path,
-                    title: "Bad Request"
-                )
+            return Problem(
+                detail: "The JSON Patch Document is in incorrect format",
+                statusCode: 400,
+                instance: HttpContext.Request.Path,
+                title: "Bad Request"
             );
         }
 
