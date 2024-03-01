@@ -143,6 +143,27 @@ public class AuthorsController : ControllerBase
         return Ok(shapedAuthorWithLinks);
     }
 
+    [HttpPost]
+    public async Task<ActionResult<AuthorDto>> CreateAuthor(AuthorForCreationDto author)
+    {
+        Author authorEntity = _mapper.Map<Author>(author);
+
+        _courseLibraryRepository.AddAuthor(authorEntity);
+        await _courseLibraryRepository.SaveAsync();
+
+        IDictionary<string, object?> shapedAuthorWithLinks = _mapper
+            .Map<AuthorDto>(authorEntity)
+            .ShapeData(null);
+
+        shapedAuthorWithLinks.Add("link", CreateLinksForAuthor(authorEntity.Id, null));
+
+        return CreatedAtRoute(
+            "GetAuthor",
+            new { authorId = authorEntity.Id },
+            shapedAuthorWithLinks
+        );
+    }
+
     private IEnumerable<LinkDto> CreateLinksForAuthor(Guid authorId, string? fields)
     {
         List<LinkDto> links = [];
@@ -151,7 +172,7 @@ public class AuthorsController : ControllerBase
             fields == null
                 ? Url.Link("GetAuthor", new { authorId })!
                 : Url.Link("GetAuthor", new { authorId, fields })!;
-        
+
         links.Add(new LinkDto(selfUrl, "self", "GET"));
 
         string createCourseUrl = Url.Link("CreateCourseForAuthor", new { authorId })!;
@@ -161,19 +182,6 @@ public class AuthorsController : ControllerBase
         links.Add(new LinkDto(getCoursesUrl, "get_courses_for_author", "GET"));
 
         return links;
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<AuthorDto>> CreateAuthor(AuthorForCreationDto author)
-    {
-        var authorEntity = _mapper.Map<Author>(author);
-
-        _courseLibraryRepository.AddAuthor(authorEntity);
-        await _courseLibraryRepository.SaveAsync();
-
-        var authorToReturn = _mapper.Map<AuthorDto>(authorEntity);
-
-        return CreatedAtRoute("GetAuthor", new { authorId = authorToReturn.Id }, authorToReturn);
     }
 
     [HttpOptions]
