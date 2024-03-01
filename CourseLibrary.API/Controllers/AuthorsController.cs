@@ -1,4 +1,5 @@
-﻿using Ardalis.GuardClauses;
+﻿using System.Dynamic;
+using Ardalis.GuardClauses;
 using AutoMapper;
 using CourseLibrary.API.Entities;
 using CourseLibrary.API.Helpers;
@@ -56,22 +57,12 @@ public class AuthorsController : ControllerBase
 
         var pagedAuthors = await _courseLibraryRepository.GetAuthorsAsync(authorsParameters);
 
-        string? previousPageLink = pagedAuthors.HasPrevious
-            ? CreateAuthorsUri(ResourceUriType.PreviousPage, authorsParameters)
-            : null;
-
-        string? nextPageLink = pagedAuthors.HasNext
-            ? CreateAuthorsUri(ResourceUriType.NextPage, authorsParameters)
-            : null;
-
         var paginationMetadata = new
         {
             pageNumber = pagedAuthors.PageNumber,
             pageSize = pagedAuthors.PageSize,
             totalElements = pagedAuthors.TotalElements,
-            totalPages = pagedAuthors.TotalPages,
-            previousPageLink,
-            nextPageLink
+            totalPages = pagedAuthors.TotalPages
         };
 
         HttpContext.Response.Headers.Append(
@@ -79,9 +70,55 @@ public class AuthorsController : ControllerBase
             JsonConvert.SerializeObject(paginationMetadata)
         );
 
-        return Ok(
-            _mapper.Map<IEnumerable<AuthorDto>>(pagedAuthors).ShapeData(authorsParameters.Fields)
-        );
+        List<ExpandoObject> shapedAuthorsWithLinks = _mapper
+            .Map<IEnumerable<AuthorDto>>(pagedAuthors)
+            .ShapeData(authorsParameters.Fields)
+            .ToList();
+
+        foreach (var shapedAuthor in shapedAuthorsWithLinks)
+        {
+            IDictionary<string, object?> authorAsDictionary = shapedAuthor;
+            authorAsDictionary.Add(
+                "links",
+                CreateLinksForAuthor((Guid)authorAsDictionary["Id"]!, null)
+            );
+        }
+
+        var objectToReturn = new
+        {
+            value = shapedAuthorsWithLinks,
+            links = CreateLinksForAuthors(
+                authorsParameters,
+                pagedAuthors.HasPrevious,
+                pagedAuthors.HasNext
+            )
+        };
+
+        return Ok(objectToReturn);
+    }
+
+    public IEnumerable<LinkDto> CreateLinksForAuthors(
+        AuthorsParameters authorsParameters,
+        bool hasPrevious,
+        bool hasNext
+    )
+    {
+        List<LinkDto> links = [];
+
+        string selfUrl = Url.Link("GetAuthors", new { })!;
+        links.Add(new LinkDto(selfUrl, "get_authors", "GET"));
+
+        string? nextLink = hasNext
+            ? CreateAuthorsUri(ResourceUriType.NextPage, authorsParameters)
+            : null;
+        links.Add(new LinkDto(nextLink, "next_page", "GET"));
+
+        string? prevLink = hasPrevious
+            ? CreateAuthorsUri(ResourceUriType.NextPage, authorsParameters)
+            : null;
+        links.Add(new LinkDto(prevLink, "previous_page", "GET"));
+
+        return links;
     }
 
     private ActionResult BadRequestWithDetail(string detail)
