@@ -8,7 +8,9 @@ using CourseLibrary.API.Models;
 using CourseLibrary.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
+using MediaTypeHeaderValue = System.Net.Http.Headers.MediaTypeHeaderValue;
 
 namespace CourseLibrary.API.Controllers;
 
@@ -39,7 +41,10 @@ public class AuthorsController : ControllerBase
     }
 
     [HttpGet(Name = "GetAuthors")]
-    public async Task<IActionResult> GetAuthors([FromQuery] AuthorsParameters authorsParameters)
+    public async Task<IActionResult> GetAuthors(
+        [FromQuery] AuthorsParameters authorsParameters,
+        [FromHeader(Name = "Accept")] string acceptHeaderValue
+    )
     {
         if (!_propertyMappingService.HasMappingsFor<AuthorDto, Author>(authorsParameters.OrderBy))
         {
@@ -70,12 +75,12 @@ public class AuthorsController : ControllerBase
             JsonConvert.SerializeObject(paginationMetadata)
         );
 
-        List<ExpandoObject> shapedAuthorsWithLinks = _mapper
+        List<ExpandoObject> shapedAuthors = _mapper
             .Map<IEnumerable<AuthorDto>>(pagedAuthors)
             .ShapeData(authorsParameters.Fields)
             .ToList();
 
-        foreach (var shapedAuthor in shapedAuthorsWithLinks)
+        foreach (var shapedAuthor in shapedAuthors)
         {
             IDictionary<string, object?> authorAsDictionary = shapedAuthor;
             authorAsDictionary.Add(
@@ -86,7 +91,7 @@ public class AuthorsController : ControllerBase
 
         var objectToReturn = new
         {
-            value = shapedAuthorsWithLinks,
+            value = shapedAuthors,
             links = CreateLinksForAuthors(
                 authorsParameters,
                 pagedAuthors.HasPrevious,
@@ -155,8 +160,19 @@ public class AuthorsController : ControllerBase
     }
 
     [HttpGet("{authorId}", Name = "GetAuthor")]
-    public async Task<ActionResult<AuthorDto>> GetAuthor(Guid authorId, [FromQuery] string? fields)
+    public async Task<ActionResult<AuthorDto>> GetAuthor(
+        Guid authorId,
+        [FromQuery] string? fields,
+        [FromHeader(Name = "Accept")] string acceptHeaderValue
+    )
     {
+        if (!MediaTypeHeaderValue.TryParse(acceptHeaderValue, out MediaTypeHeaderValue? mediaType))
+        {
+            return BadRequestWithDetail(
+                $"The provided Accept header: {acceptHeaderValue} can't be parsed"
+            );
+        }
+
         if (!_propertyChecker.HasPropertiesForDataShaping<AuthorDto>(fields))
         {
             return BadRequestWithDetail(
@@ -175,7 +191,10 @@ public class AuthorsController : ControllerBase
             .Map<AuthorDto>(authorFromRepo)
             .ShapeData(fields);
 
-        shapedAuthorWithLinks.Add("links", CreateLinksForAuthor(authorId, fields));
+        if (mediaType.ToString() == "application/vnd.marvin.hateoas+json")
+        {
+            shapedAuthorWithLinks.Add("links", CreateLinksForAuthor(authorId, fields));
+        }
 
         return Ok(shapedAuthorWithLinks);
     }
