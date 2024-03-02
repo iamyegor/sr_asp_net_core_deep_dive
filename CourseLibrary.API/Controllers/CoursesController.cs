@@ -4,6 +4,7 @@ using CourseLibrary.API.Models;
 using CourseLibrary.API.Services;
 using FluentValidation;
 using FluentValidation.Results;
+using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -49,6 +50,8 @@ public class CoursesController : ControllerBase
     }
 
     [HttpGet("{courseId}", Name = "GetCourseForAuthor")]
+    [HttpCacheExpiration(MaxAge = 1000)]
+    [HttpCacheValidation(MustRevalidate = false)]
     public async Task<ActionResult<CourseDto>> GetCourseForAuthor(Guid authorId, Guid courseId)
     {
         if (!await _repo.AuthorExistsAsync(authorId))
