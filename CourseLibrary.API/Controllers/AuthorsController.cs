@@ -101,7 +101,7 @@ public class AuthorsController : ControllerBase
         return Ok(objectToReturn);
     }
 
-    public IEnumerable<LinkDto> CreateLinksForAuthors(
+    private IEnumerable<LinkDto> CreateLinksForAuthors(
         AuthorsParameters authorsParameters,
         bool hasPrevious,
         bool hasNext
@@ -273,7 +273,37 @@ public class AuthorsController : ControllerBase
 
         return Ok(shapedAuthors);
     }
+    
+    [ValidRequestHeaderMediaType(
+        "Content-Type",
+        "application/vnd.marvin.author_with_date_of_death+json"
+    )]
+    [Consumes("application/vnd.marvin.author_with_date_of_death+json")]
+    [HttpPost]
+    public async Task<ActionResult<AuthorDto>> CreateAuthorWithDateOfDeath(
+        AuthorWithDateOfDeathForCreationDto author
+    )
+    {
+        Author authorEntity = _mapper.Map<Author>(author);
 
+        _courseLibraryRepository.AddAuthor(authorEntity);
+        await _courseLibraryRepository.SaveAsync();
+
+        IDictionary<string, object?> shapedAuthorWithLinks = _mapper
+            .Map<AuthorDto>(authorEntity)
+            .ShapeData(null);
+
+        shapedAuthorWithLinks.Add("link", CreateLinksForAuthor(authorEntity.Id, null));
+
+        return CreatedAtRoute(
+            "GetAuthor",
+            new { authorId = authorEntity.Id },
+            shapedAuthorWithLinks
+        );
+    }
+
+    [ValidRequestHeaderMediaType("Content-Type", "application/json")]
+    [Consumes("application/json")]
     [HttpPost]
     public async Task<ActionResult<AuthorDto>> CreateAuthor(AuthorForCreationDto author)
     {
@@ -294,6 +324,7 @@ public class AuthorsController : ControllerBase
             shapedAuthorWithLinks
         );
     }
+
 
     private IEnumerable<LinkDto> CreateLinksForAuthor(Guid authorId, string? fields)
     {

@@ -16,15 +16,16 @@ public class AuthorsProfile : Profile
             )
             .ForMember(
                 dest => dest.Age,
-                opt => opt.MapFrom(src => src.DateOfBirth.GetCurrentAge())
+                opt => opt.MapFrom(src => src.DateOfBirth.GetCurrentAge(src.DateOfDeath))
             );
 
         CreateMap<Author, AuthorWithFullNameDto>()
             .ForMember(
                 dest => dest.Age,
-                options => options.MapFrom(src => src.DateOfBirth.GetCurrentAge())
+                options => options.MapFrom(src => src.DateOfBirth.GetCurrentAge(src.DateOfDeath))
             );
 
         CreateMap<AuthorForCreationDto, Author>();
+        CreateMap<AuthorWithDateOfDeathForCreationDto, Author>();
     }
 }

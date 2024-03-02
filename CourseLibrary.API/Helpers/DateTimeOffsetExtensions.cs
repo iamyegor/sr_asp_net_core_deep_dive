@@ -1,13 +1,17 @@
-﻿
-namespace CourseLibrary.API.Helpers;
+﻿namespace CourseLibrary.API.Helpers;
+
 public static class DateTimeOffsetExtensions
 {
-    public static int GetCurrentAge(this DateTimeOffset dateTimeOffset)
+    public static int GetCurrentAge(this DateTimeOffset dateOfBirth, DateTimeOffset? dateOfDeath)
     {
-        var currentDate = DateTime.UtcNow;
-        int age = currentDate.Year - dateTimeOffset.Year;
+        DateTime dateForComparison = DateTime.UtcNow;
+        if (dateOfDeath != null)
+        {
+            dateForComparison = dateOfDeath.Value.DateTime;
+        }
+        int age = dateForComparison.Year - dateOfBirth.Year;
 
-        if (currentDate < dateTimeOffset.AddYears(age))
+        if (dateForComparison < dateOfBirth.AddYears(age))
         {
             age--;
         }
@@ -15,4 +19,3 @@ public static class DateTimeOffsetExtensions
         return age;
     }
 }
-
