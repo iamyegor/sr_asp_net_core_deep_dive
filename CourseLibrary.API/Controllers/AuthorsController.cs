@@ -1,6 +1,7 @@
 ﻿using System.Dynamic;
 using Ardalis.GuardClauses;
 using AutoMapper;
+using CourseLibrary.API.ActionContraints;
 using CourseLibrary.API.Entities;
 using CourseLibrary.API.Helpers;
 using CourseLibrary.API.Helpers.PropertyMapping;
@@ -8,9 +9,7 @@ using CourseLibrary.API.Models;
 using CourseLibrary.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
-using MediaTypeHeaderValue = System.Net.Http.Headers.MediaTypeHeaderValue;
 
 namespace CourseLibrary.API.Controllers;
 
@@ -159,20 +158,21 @@ public class AuthorsController : ControllerBase
         return Url.Link("GetAuthors", queryParameters);
     }
 
-    [HttpGet("{authorId}", Name = "GetAuthor")]
-    public async Task<ActionResult<AuthorDto>> GetAuthor(
+    [ValidRequestHeaderMediaType(
+        "Accept",
+        "application/vnd.marvin.hateoas+json",
+        "application/vnd.marvin.author.friendly.hateoas+json"
+    )]
+    [Produces(
+        "application/vnd.marvin.hateoas+json",
+        "application/vnd.marvin.author.friendly.hateoas+json"
+    )]
+    [HttpGet("{authorId}")]
+    public async Task<ActionResult<AuthorDto>> GetAuthorWithLinks(
         Guid authorId,
-        [FromQuery] string? fields,
-        [FromHeader(Name = "Accept")] string acceptHeaderValue
+        [FromQuery] string? fields
     )
     {
-        if (!MediaTypeHeaderValue.TryParse(acceptHeaderValue, out MediaTypeHeaderValue? mediaType))
-        {
-            return BadRequestWithDetail(
-                $"The provided Accept header: {acceptHeaderValue} can't be parsed"
-            );
-        }
-
         if (!_propertyChecker.HasPropertiesForDataShaping<AuthorDto>(fields))
         {
             return BadRequestWithDetail(
@@ -181,22 +181,97 @@ public class AuthorsController : ControllerBase
         }
 
         var authorFromRepo = await _courseLibraryRepository.GetAuthorAsync(authorId);
-
         if (authorFromRepo == null)
         {
             return NotFound();
         }
 
-        IDictionary<string, object?> shapedAuthorWithLinks = _mapper
+        IDictionary<string, object?> shapedAuthor = _mapper
             .Map<AuthorDto>(authorFromRepo)
             .ShapeData(fields);
 
-        if (mediaType.ToString() == "application/vnd.marvin.hateoas+json")
+        shapedAuthor.Add("links", CreateLinksForAuthor(authorId, fields));
+
+        return Ok(shapedAuthor);
+    }
+
+    [ValidRequestHeaderMediaType(
+        "Accept",
+        "application/json",
+        "application/vnd.marvin.author.friendly+json"
+    )]
+    [Produces("application/json", "application/vnd.marvin.author.friendly+json")]
+    [HttpGet("{authorId}", Name = "GetAuthor")]
+    public async Task<ActionResult<AuthorDto>> GetAuthor(Guid authorId, [FromQuery] string? fields)
+    {
+        if (!_propertyChecker.HasPropertiesForDataShaping<AuthorDto>(fields))
         {
-            shapedAuthorWithLinks.Add("links", CreateLinksForAuthor(authorId, fields));
+            return BadRequestWithDetail(
+                $"Author doesn't have some of the provided fields: {fields}"
+            );
         }
 
-        return Ok(shapedAuthorWithLinks);
+        var authorFromRepo = await _courseLibraryRepository.GetAuthorAsync(authorId);
+        if (authorFromRepo == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(_mapper.Map<AuthorDto>(authorFromRepo).ShapeData(fields));
+    }
+
+    [ValidRequestHeaderMediaType("Accept", "application/vnd.marvin.author.full+json")]
+    [Produces("application/vnd.marvin.author.full+json")]
+    [HttpGet("{authorId}")]
+    public async Task<ActionResult<AuthorDto>> GetAuthorWithFullName(
+        Guid authorId,
+        [FromQuery] string? fields
+    )
+    {
+        if (!_propertyChecker.HasPropertiesForDataShaping<AuthorWithFullNameDto>(fields))
+        {
+            return BadRequestWithDetail(
+                $"Author doesn't have some of the provided fields: {fields}"
+            );
+        }
+
+        var authorFromRepo = await _courseLibraryRepository.GetAuthorAsync(authorId);
+        if (authorFromRepo == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(_mapper.Map<AuthorWithFullNameDto>(authorFromRepo).ShapeData(fields));
+    }
+
+    [ValidRequestHeaderMediaType("Accept", "application/vnd.marvin.author.full.hateoas+json")]
+    [Produces("application/vnd.marvin.author.full.hateoas+json")]
+    [HttpGet("{authorId}")]
+    public async Task<ActionResult<AuthorDto>> GetAuthorWithFullNameWithLinks(
+        Guid authorId,
+        [FromQuery] string? fields
+    )
+    {
+        if (!_propertyChecker.HasPropertiesForDataShaping<AuthorWithFullNameDto>(fields))
+        {
+            return BadRequestWithDetail(
+                $"Author doesn't have some of the provided fields: {fields}"
+            );
+        }
+
+        var authorFromRepo = await _courseLibraryRepository.GetAuthorAsync(authorId);
+        if (authorFromRepo == null)
+        {
+            return NotFound();
+        }
+
+        IDictionary<string, object?> shapedAuthors = _mapper
+            .Map<AuthorWithFullNameDto>(authorFromRepo)
+            .ShapeData(fields);
+
+        shapedAuthors.Add("links", CreateLinksForAuthor(authorId, fields));
+
+        return Ok(shapedAuthors);
     }
 
     [HttpPost]
