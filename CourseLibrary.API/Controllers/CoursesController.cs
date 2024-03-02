@@ -6,7 +6,6 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
 
@@ -37,7 +36,7 @@ public class CoursesController : ControllerBase
             ?? throw new ArgumentNullException(nameof(courseForUpdateValidator));
     }
 
-    [HttpGet(Name="GetCoursesForAuthor")]
+    [HttpGet(Name = "GetCoursesForAuthor")]
     public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesForAuthor(Guid authorId)
     {
         if (!await _repo.AuthorExistsAsync(authorId))
@@ -66,7 +65,7 @@ public class CoursesController : ControllerBase
         return Ok(_mapper.Map<CourseDto>(courseForAuthorFromRepo));
     }
 
-    [HttpPost(Name="CreateCourseForAuthor")]
+    [HttpPost(Name = "CreateCourseForAuthor")]
     public async Task<ActionResult<CourseDto>> CreateCourseForAuthor(
         Guid authorId,
         CourseForCreationDto course

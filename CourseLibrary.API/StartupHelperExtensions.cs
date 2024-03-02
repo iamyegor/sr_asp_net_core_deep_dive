@@ -70,6 +70,18 @@ internal static class StartupHelperExtensions
 
         builder.Services.AddTransient<PropertyChecker>();
 
+        builder.Services.AddResponseCaching();
+        builder.Services.AddHttpCacheHeaders(
+            expirationModel =>
+            {
+                expirationModel.MaxAge = 120;
+            },
+            validationModel =>
+            {
+                validationModel.MustRevalidate = true;
+            }
+        );
+
         return builder.Build();
     }
 
@@ -91,6 +103,10 @@ internal static class StartupHelperExtensions
                 });
             });
         }
+
+        app.UseResponseCaching();
+
+        app.UseHttpCacheHeaders();
 
         app.UseAuthorization();
 

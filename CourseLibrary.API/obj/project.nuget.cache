@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "OevDYlDBcmzHYfIGlIkfQsK3SAvIcGDgzZ8kVkmqHbrGQLJLpkp/S4/nXDrnm5s3J6uE2yFZjfVAvlVCpexAOw==",
+  "dgSpecHash": "h67xRRDt4riG65lMdRmigE9JBbISu1L0w1UBImszkMHSn4nQXmjbAh96n0+QFoufCZSAGu5p6zl3WglgIx2LFQ==",
   "success": true,
   "projectFilePath": "/home/yegor/RiderProjects/sr_asp_net_core_deep_dive/Starter files/CourseLibrary.API/CourseLibrary.API.csproj",
   "expectedPackageFiles": [
@@ -10,6 +10,7 @@
     "/home/yegor/.nuget/packages/fluentvalidation/11.9.0/fluentvalidation.11.9.0.nupkg.sha512",
     "/home/yegor/.nuget/packages/fluentvalidation.dependencyinjectionextensions/11.9.0/fluentvalidation.dependencyinjectionextensions.11.9.0.nupkg.sha512",
     "/home/yegor/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
+    "/home/yegor/.nuget/packages/marvin.cache.headers/7.1.0/marvin.cache.headers.7.1.0.nupkg.sha512",
     "/home/yegor/.nuget/packages/microsoft.aspnetcore.jsonpatch/8.0.1/microsoft.aspnetcore.jsonpatch.8.0.1.nupkg.sha512",
     "/home/yegor/.nuget/packages/microsoft.aspnetcore.mvc.newtonsoftjson/8.0.1/microsoft.aspnetcore.mvc.newtonsoftjson.8.0.1.nupkg.sha512",
     "/home/yegor/.nuget/packages/microsoft.bcl.asyncinterfaces/6.0.0/microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
